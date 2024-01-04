@@ -10,18 +10,20 @@ import chromadb
 folder_path = 'dataset_testi'
 text_documents = []
 
-# List all files in the folder
+# Scorre tutti i file della cartella "dataset_testi"
 for filename in os.listdir(folder_path):
     if filename.endswith('.txt'):
         file_path = os.path.join(folder_path, filename)
 
-        # Read the content of the text document
+        # Legge il contenuto dei file di testo
         with open(file_path, 'r', encoding="utf8") as file:
             document_content = file.read()
 
-            # Append the content to the vector
+            # Aggiunge il contenuto dei file di testo all'interno del vettore "text_documents"
             text_documents.append(document_content)
 
+# Se il file "embeddings_testi.npy" non è stato ancora generato per salvare in locale il prodotto finale degli
+# embeddings creati a partire dal file di testo, procede a creare tale file
 if not os.path.exists("embeddings_testi.npy"):
 
     # Inizializza il tokenizer e il modello BERT
@@ -52,19 +54,26 @@ if not os.path.exists("embeddings_testi.npy"):
 
     np.save("embeddings_testi.npy", embeddings_512)
 
+# Se, invece, il file "embeddings_testi.npy" è già stato creato, evita di effettuare tutto il procedimento di creazione,
+# decisamente esoso in termini di tempo e risorse, richiamando il file già esistente
 else:
 
     embeddings_512 = np.load("embeddings_testi.npy")
     print(embeddings_512.shape)  # Dovrebbe essere (1000, 512)
 
 
-# Assumendo che embeddings_512 e text_documents abbiano la stessa lunghezza
+# Assumendo che embeddings_512 e text_documents abbiano la stessa lunghezza, si procede a creare tanti id quanti sono
+# gli embeddings e, quindi, i file di testo
 num_items = len(embeddings_512)
 ids_uuid = [str(uuid.uuid4()) for _ in range(num_items)]
 
 
 chroma_client = chromadb.Client()
+
+# Creazione della collezione tramite la libreria chroma
 collection = chroma_client.create_collection(name="my_collection")
+
+# Aggiunta degli embeddings nella collezione
 collection.add(
     embeddings=embeddings_512,
     documents=text_documents,
