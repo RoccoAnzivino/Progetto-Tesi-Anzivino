@@ -5,6 +5,8 @@ from sklearn.decomposition import PCA
 import numpy as np
 import uuid
 import chromadb
+import matplotlib
+import matplotlib.pyplot as plt
 
 
 folder_path = 'dataset_testi'
@@ -79,3 +81,29 @@ collection.add(
     documents=text_documents,
     ids=ids_uuid
 )
+
+
+matplotlib.use('TkAgg')  # Imposta TkAgg come backend
+
+# Estrae le componenti separate
+x = embeddings_3[:, 0]  # Prima componente
+y = embeddings_3[:, 1]  # Seconda componente
+z = embeddings_3[:, 2]  # Terza componente
+
+# Crea una figura per il plot 3D
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+
+# Aggiunge i dati al grafico
+ax.scatter(x, y, z)
+
+# Imposta le etichette degli assi
+ax.set_xlabel('Componente PCA 1')
+ax.set_ylabel('Componente PCA 2')
+ax.set_zlabel('Componente PCA 3')
+
+#  Modifica il titolo del grafico
+fig.canvas.manager.set_window_title('Visualizzazione tridimensionale degli embeddings')
+
+# Mostra il grafico
+plt.show()
