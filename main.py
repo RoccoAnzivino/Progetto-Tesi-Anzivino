@@ -45,26 +45,26 @@ if not os.path.exists("embeddings_testi.npy"):
     # Conversione in numpy per PCA
     embeddings_numpy = embeddings_tensor.numpy()
 
-    # Applica PCA per ridurre a 512 componenti
-    pca = PCA(n_components=512)
-    embeddings_512 = pca.fit_transform(embeddings_numpy)
+    # Applica PCA per ridurre a 3 componenti
+    pca = PCA(n_components=3)
+    embeddings_3 = pca.fit_transform(embeddings_numpy)
 
     # Verifica delle dimensioni degli embeddings ridotti
-    print(embeddings_512.shape)  # Dovrebbe essere (1000, 512)
+    print(embeddings_3.shape)  # Dovrebbe essere (1000, 3)
 
-    np.save("embeddings_testi.npy", embeddings_512)
+    np.save("embeddings_testi.npy", embeddings_3)
 
 # Se, invece, il file "embeddings_testi.npy" è già stato creato, evita di effettuare tutto il procedimento di creazione,
 # decisamente esoso in termini di tempo e risorse, richiamando il file già esistente
 else:
 
-    embeddings_512 = np.load("embeddings_testi.npy")
-    print(embeddings_512.shape)  # Dovrebbe essere (1000, 512)
+    embeddings_3 = np.load("embeddings_testi.npy")
+    print(embeddings_3.shape)  # Dovrebbe essere (1000, 3)
 
 
 # Assumendo che embeddings_512 e text_documents abbiano la stessa lunghezza, si procede a creare tanti id quanti sono
 # gli embeddings e, quindi, i file di testo
-num_items = len(embeddings_512)
+num_items = len(embeddings_3)
 ids_uuid = [str(uuid.uuid4()) for _ in range(num_items)]
 
 
@@ -75,7 +75,7 @@ collection = chroma_client.create_collection(name="my_collection")
 
 # Aggiunta degli embeddings nella collezione
 collection.add(
-    embeddings=embeddings_512,
+    embeddings=embeddings_3,
     documents=text_documents,
     ids=ids_uuid
 )
